@@ -1,0 +1,4 @@
+name = confirm_form example
+description = This example module shows how to use the confirm_form API method.
+core = 7.x
+package = Example modules

@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * confirm form example module
+ *
+ * */
+
+function confirm_form_example_menu() {
+  $items['confirm_form_example_delete_object'] = array(
+    'title' => 'Edit Object',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array( 'cfe_edit_object' ),
+    'access arguments' => array( 'access content' ),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+function cfe_edit_object( $form, &$form_state ) {
+  // dpm( $form_state );
+  if ( isset( $form_state['storage'] ) && $form_state['storage']['ask_confirm'] ) {
+    $question = t( "Are you sure you want to delete this precious object?" );
+    $path = 'confirm_form_example_delete_object';
+    $description = t( "This cannot be undone." );
+    $yes = t( "Confirm" );
+    $no = t( "Cancel" );
+    return confirm_form( $form, $question, $path, $description, $yes, $no );
+  }
+  else {
+    $form['name'] = array(
+      '#type' => 'textfield',
+      '#title' => t( "Object Name" ),
+      '#default_value' => t( "Hello World!" ),
+      '#description' => t( "Don't worry about doing anything here..." ),
+    );
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t( "Submit" ),
+    );
+    $form['delete'] = array(
+      '#type' => 'submit',
+      '#value' => t( "Delete" ),
+    );
+  }
+  return $form;
+}
+
+function cfe_edit_object_submit( $form, &$form_state ) {
+  // dpm( $form_state );
+  if ( $form_state['clicked_button']['#value'] == 'Delete' ) {
+    $form_state['rebuild'] = TRUE;
+    $form_state['storage']['ask_confirm'] = TRUE;
+  }
+  else if ( isset( $form_state['values']['confirm'] ) && $form_state['values']['confirm'] ) {
+    $msg = t( "The object has been deleted." );
+    drupal_set_message( $msg );
+  }
+  else if ( $form_state['clicked_button']['#value'] == 'Submit' ) {
+    $msg = t( "The object information has been updated." );
+    drupal_set_message( $msg );
+  }
+}
+
+/* End of the confirm_form_example.module file */
